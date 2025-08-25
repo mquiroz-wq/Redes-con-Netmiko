@@ -17,7 +17,7 @@ Toda la infraestructura se gestiona de forma centralizada desde una **PC Sysadmi
 
 ## 🖥️ Topología de Red
 
-![Diagrama de red](Topologia.png)
+![Diagrama de red](Topologia.PNG)
 
 ### Componentes Principales
 
