@@ -233,7 +233,38 @@ net_connect.disconnect()
 ```
 
 ---
+## 🟢 Ejemplo de salida al ejecutar el código
 
+A continuación se muestra cómo se vería la salida en consola tras ejecutar el script de automatización:
+
+![Ejemplo de salida de script Netmiko](1)
+
+```
+(netmiko_env) itel@debian:~$ python3 script.py
+=== Automatización de red (Netmiko) ===
+
+== Configurando Switch 10.10.14.2 ==
+
+-- Cambios realizados --
+✔ VLAN 250
+✔ VLAN 251
+✔ VLAN 252
+✔ interface e0/0
+✔ interface e0/3
+✔ interface e1/1
+✔ Trunk
+
+-- Verificación --
+
+VLAN Name          Status     Ports
+-------------------------------------------
+1 default          active     Et1/0, Et1/2, Et1/3, Et2/0, Et2/1, Et2/2, Et2/3
+250 Ventas         active     Et0/0
+251 Técnica        active     Et0/3
+252 Visitantes     active     Et1/1
+...
+1499 Gestion       active     Et0/0, Et0/2
+```
 ---
 
 ## 📝 Licencia y Autor
