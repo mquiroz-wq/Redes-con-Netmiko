@@ -44,19 +44,17 @@ La red base asignada es **10.10.14.0/24** (bloque de estudiante). Se implementan
 
 ---
 
-## 🔧 Ejemplo de Configuración de Dispositivos
+## 🔧 Configuración de Dispositivos
 
-A continuación, se muestra un ejemplo de configuración para switches Cisco y routers MikroTik. Adapta las contraseñas y nombres de usuario según tus necesidades.
-
-### Switch Cisco (Switch56/Switch57)
+### 🔹 Switch Remoto (Switch56)
 
 ```bash
 enable
 configure terminal
 
-hostname SwitchXX
-enable secret <contraseña>
-username admin secret <contraseña>
+hostname Switch56
+enable secret <contraseña-configurada>
+username admin secret <contraseña-configurada>
 clock timezone -03 -3 0
 no ip domain-lookup
 ip domain-name midominio.local
@@ -72,7 +70,7 @@ interface Ethernet0/0
 exit
 
 interface Vlan1499
- ip address 10.10.14.X 255.255.255.248
+ ip address 10.10.14.3 255.255.255.248
  no shutdown
 exit
 
@@ -102,7 +100,70 @@ end
 write memory
 ```
 
-### Router MikroTik
+---
+
+### 🔹 Switch Principal (Switch57)
+
+```bash
+enable
+configure terminal
+
+hostname Switch57
+enable secret <contraseña-configurada>
+username admin secret <contraseña-configurada>
+clock timezone -03 -3 0
+no ip domain-lookup
+ip domain-name midominio.local
+ip cef
+
+vlan 1499
+ name Gestion
+exit
+
+interface Ethernet0/0
+ switchport mode access
+ switchport access vlan 1499
+exit
+
+interface Ethernet0/2
+ switchport mode access
+ switchport access vlan 1499
+exit
+
+interface Vlan1499
+ ip address 10.10.14.2 255.255.255.248
+ no shutdown
+exit
+
+ip http server
+ip http secure-server
+crypto key generate rsa modulus 1024
+ip ssh version 2
+
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+exit
+
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+exit
+
+line vty 0 4
+ login local
+ transport input ssh
+exit
+
+end
+write memory
+```
+
+---
+
+### 🔹 Router MikroTik Remoto
 
 ```shell
 /interface bridge
@@ -113,7 +174,29 @@ add bridge=bridge-trunk interface=ether1
 add bridge=bridge-trunk interface=ether2
 
 /ip address
-add address=10.10.14.X/29 comment=Gestion interface=ether1 network=10.10.14.0
+add address=10.10.14.4/29 comment=Gestion interface=ether1 network=10.10.14.0
+
+/ip dhcp-client
+add interface=ether1
+
+/ip service
+set ssh address=10.10.14.0/29
+```
+
+---
+
+### 🔹 Router MikroTik Principal
+
+```shell
+/interface bridge
+add name=bridge-trunk
+
+/interface bridge port
+add bridge=bridge-trunk interface=ether2
+add bridge=bridge-trunk interface=ether1
+
+/ip address
+add address=10.10.14.1/29 comment=Gestion interface=ether1 network=10.10.14.0
 
 /ip dhcp-client
 add interface=ether1
@@ -151,20 +234,10 @@ net_connect.disconnect()
 
 ---
 
-## 📦 Recomendaciones para el Repositorio
-
-- Añade una carpeta `/configuraciones` con los archivos de configuración para cada dispositivo.
-- Incluye el script `netmiko_script.py` en la raíz del repositorio.
-- Sube el diagrama de red en `/diagramas` o la raíz.
-- Documenta tu código y agrega ejemplos para cada dispositivo.
-
 ---
 
 ## 📝 Licencia y Autor
 
-Trabajo práctico integrador para la materia **Redes y Comunicaciones** - [Tu Nombre o Grupo]  
-Licencia: [Selecciona una, por ejemplo MIT]
+Trabajo práctico integrador para la materia **Redes y Comunicaciones** - Quiroz Martina.  
 
 ---
-
-¿Quieres que te genere un ejemplo de script base con Netmiko (`netmiko_script.py`) para Cisco y MikroTik?
